@@ -1,5 +1,5 @@
 # Stage 1: Build the app with Maven
-FROM docker pull maven
+FROM docker pull maven AS build
 WORKDIR /app
 
 # Copy Maven config files first to cache dependencies
