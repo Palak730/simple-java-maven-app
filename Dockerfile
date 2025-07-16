@@ -1,23 +1,33 @@
-# Use Maven 3.9.9 with JDK 24 to build the app
+# Build stage: Use Maven 3.9.9 with Eclipse Temurin JDK 24
 FROM maven:3.9.9-eclipse-temurin-24 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy all project files to container
+# Copy all project files
 COPY . .
 
-# Build the project and create JAR file
+# Build the project, skip tests to speed up
 RUN mvn clean package -DskipTests
 
-# Use a lightweight JDK runtime to run the app
+# Runtime stage: Use lightweight JDK Alpine image
 FROM eclipse-temurin:24-jdk-alpine
 
-# Set working directory in runtime container
+# Create a non-root user and group
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /app
 
-# Copy the JAR from the build stage
+# Copy JAR from build stage (assuming only one JAR in target)
 COPY --from=build /app/target/*.jar app.jar
 
-# Run the application
+# Change ownership of app directory
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port if your app listens on one (optional)
+# EXPOSE 8080
+
+# Run the app
 ENTRYPOINT ["java", "-jar", "app.jar"]
