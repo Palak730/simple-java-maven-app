@@ -1,6 +1,5 @@
 # Stage 1: Build the app with Maven
-FROM maven:3.9.4-eclipse-temurin-24 AS build
-
+FROM docker pull maven
 WORKDIR /app
 
 # Copy Maven config files first to cache dependencies
