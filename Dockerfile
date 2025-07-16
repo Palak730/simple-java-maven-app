@@ -1,4 +1,4 @@
-# Use Maven 3.9.9 with JDK 17 to build the app
+# Use Maven 3.9.9 with JDK 24 to build the app
 FROM maven:3.9.9-eclipse-temurin-24 AS build
 
 # Set working directory
