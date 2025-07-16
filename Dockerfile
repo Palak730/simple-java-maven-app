@@ -1,5 +1,5 @@
 # Use an official OpenJDK runtime as the base image
-FROM eclipse-temurin:24-jdk-jammy
+FROM eclipse-temurin:24-jdk
 
 # Set working directory inside the container
 WORKDIR /app
