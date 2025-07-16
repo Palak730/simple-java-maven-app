@@ -1,15 +1,24 @@
-# Use an official OpenJDK runtime as the base image
-FROM eclipse-temurin:24-jdk
+# Stage 1: Build the app with Maven
+FROM maven:3.9.4-eclipse-temurin-24 AS build
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy the built jar file from the target folder into the container
-# Adjust the jar file name if yours is different
-COPY target/my-app.jar app.jar
+# Copy Maven config files first to cache dependencies
+COPY pom.xml .
+COPY src ./src
 
-# Expose the port your app listens on (adjust if needed)
+# Build the jar, skipping tests
+RUN mvn -B package -DskipTests
+
+# Stage 2: Create the runtime image
+FROM eclipse-temurin:24-jdk
+
+WORKDIR /app
+
+# Copy the jar from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Run the jar file
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
