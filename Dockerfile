@@ -1,25 +1,23 @@
-# Stage 1: Build the app using Maven + SapMachine JDK
-FROM maven:sapmachine AS build
+# Use Maven 3.9.9 with JDK 17 to build the app
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 
+# Set working directory
 WORKDIR /app
 
-# Copy pom.xml and src to container
-COPY pom.xml .
-COPY src ./src
+# Copy all project files to container
+COPY . .
 
-# Build the JAR file, skipping tests for speed
-RUN mvn -B package -DskipTests
+# Build the project and create JAR file
+RUN mvn clean package -DskipTests
 
-# Stage 2: Create a smaller runtime image with JDK 24
-FROM eclipse-temurin:24-jdk
+# Use a lightweight JDK runtime to run the app
+FROM eclipse-temurin:17-jdk-alpine
 
+# Set working directory in runtime container
 WORKDIR /app
 
-# Copy only the built JAR from the build stage
+# Copy the JAR from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose app port (optional, e.g., for Spring Boot or other HTTP apps)
-EXPOSE 8080
-
-# Start the application
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
