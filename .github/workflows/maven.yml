@@ -59,20 +59,20 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-app
-          docker build -t $IMAGE_NAME:latest .
+          IMAGE_NAME=ghcr.io/${{ github.actor }}/my-app
+          docker build -t my-app:latest .
 
       - name: Tag Docker image with commit SHA
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-app
-          docker tag $IMAGE_NAME:latest $IMAGE_NAME:${{ github.sha }}
+          IMAGE_NAME=ghcr.io/${{ github.actor }}/my-app
+          docker tag $IMAGE_NAME:latest my-app:${{ github.sha }}
 
       - name: Push Docker image (latest)
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-app
-          docker push $IMAGE_NAME:latest
+          IMAGE_NAME=ghcr.io/${{ github.actor }}/my-app
+          docker push my-app:latest
 
       - name: Push Docker image (commit SHA)
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/my-app
-          docker push $IMAGE_NAME:${{ github.sha }}
+          IMAGE_NAME=ghcr.io/${{ github.actor }}/my-app
+          docker push my-app:${{ github.sha }}
